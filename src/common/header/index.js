@@ -1,24 +1,10 @@
-import React,{Component} from 'react';
+import React from 'react';
+import {connect} from 'react-redux';
 import {HeaderWrapper,Logo,Nav,NavItem,SearchWrapper,NavSearch,Addition,Button} from './styled.js'
-class Header extends Component{
-	constructor(props){
-		super(props);
-		this.state={isFocus:false}
-		this.searchFocused=this.searchFocused.bind(this)
-		this.searchBlur=this.searchBlur.bind(this)
-	}	
-	searchFocused(){
-		this.setState({
-			isFocus:true
-		})
-	}
-	searchBlur(){
-		this.setState({
-			isFocus:false
-		})
-	}
-	render(){
-		return(
+
+import {actionCreator} from './store'
+const Header =(props)=>{
+	return (
 			<HeaderWrapper>
 				<Logo href='/'/>
 				<Nav>
@@ -29,8 +15,8 @@ class Header extends Component{
 						<i className="iconfont">&#xe636;</i>
 					</NavItem>
 					<SearchWrapper>
-					<NavSearch onBlur={this.searchBlur} onFocus={this.searchFocused} className={this.state.isFocus?'focused':''}/>
-					<i  className={this.searchBlur} onFocus={this.searchFocused} className={this.state.isFocus?'focused iconfont':'iconfont'}>&#xe614;</i>
+					<NavSearch onBlur={props.searchBlur} onFocus={props.searchFocused} className={props.isFocus?'focused':''}/>
+					<i  className={props.searchBlur} onFocus={props.searchFocused} className={props.isFocus?'focused iconfont':'iconfont'}>&#xe614;</i>
 					</SearchWrapper>
 				</Nav>
 				<Addition>
@@ -40,8 +26,24 @@ class Header extends Component{
 					<Button className='reg'>注册</Button>
 				</Addition>	
 			</HeaderWrapper>
-			)
+		)
+}
+
+const mapStateToProps=(state)=>{
+	return{
+		isFocus:state.getIn(['header','focused'])
 	}
 }
 
-export default Header;
+const mapDisPatchToProps=(dispatch)=>{
+	return {
+		searchFocused(){
+			dispatch(actionCreator.searchFocused())
+		},
+		searchBlur(){
+			
+			dispatch(actionCreator.searchBlur())
+		}
+	}
+}	
+export default connect(mapStateToProps,mapDisPatchToProps)(Header);
